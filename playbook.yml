@@ -1,0 +1,37 @@
+---
+- name: configure application servers
+  hosts: app
+  become: yes
+  gather_facts: yes
+  #serial: 1
+
+  vars:
+    nginx_port: 80
+  tasks:
+    - name: install cowsay
+      yum:
+        name: cowsay
+        state: present
+
+    - name: create deploy user
+      user:
+        name: deploy
+        state: present
+        create_home: yes
+
+    - name: install nginx
+      yum: name=nginx state=present
+
+    - name: configure nginx
+      template: src=nginx.conf.j2 dest=/tmp/example.conf
+
+- name: deploy irc server
+  hosts: irc
+  become: yes
+  gather_facts: yes
+  tasks:
+    - name: install cowsay
+      yum: name=cowsay state=present
+    
+    - name: create ergo user
+      user: name=ergo shell=/bin/bash create_home=yes

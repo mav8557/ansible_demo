@@ -1,14 +1,14 @@
 [app]
-192.168.56.10 
-192.168.56.11
+192.168.56.[10:11]
 
-[db]
+[irc]
 192.168.56.12
 
 [atlanta:children]
 app
-db
+irc
 
 [atlanta:vars]
 ansible_ssh_user=vagrant
 ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key
+host_key_checking=False
