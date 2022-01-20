@@ -1,0 +1,14 @@
+[app]
+192.168.56.10 
+192.168.56.11
+
+[db]
+192.168.56.12
+
+[atlanta:children]
+app
+db
+
+[atlanta:vars]
+ansible_ssh_user=vagrant
+ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key
