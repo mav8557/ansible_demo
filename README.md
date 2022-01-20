@@ -30,21 +30,30 @@ ansible atlanta -a "hostname" -i inventory
 ansible atlanta -a "uptime -p; hostname" -m shell
 ```
 
-For each of these, the "changed" flag is set to true. Ansible does not parse and know the result of every shell command in existence, so it assumes that it changed the system somehow.
+For each of these, the "changed" flag is set to true. Ansible cannot know the result of every shell command in past, present, or future existence, so it just assumes that your command changed the system somehow.
 
 There are many other modules for that let you configure the system and also implement proper idempotence. An example is the yum module, which we should use since these VMs run CentOS 7.
 
 ```bash
 ansible atlanta -a "cowsay hello RITLUG!" -i inventory # no such file
-ansible atlanta -m yum -a "name=cowsay state=present"
+ansible atlanta -m yum -a "name=cowsay state=present" --become
 ansible atlanta -a "cowsay hello RITLUG!" -i inventory # works!
 ```
 Idempotence is a big feature with Ansible - we're not installing a package every time we run this, we're *ensuring* the package is installed - it only actually installs if it isn't there.
 
+We passed --become to become root, since we need those permissions to install packages. Try running it without --become to see a common error message.
+
 You can similarly ensure it is removed:
 
 ```bash
-ansible atlanta -m yum -a "name=cowsay state=removed"
+ansible atlanta -m yum -a "name=cowsay state=removed" --become
+```
+
+The command module has additional protections, try the following two commands and observe that the command module will not interpret the subcommand.
+
+```bash
+ansible atlanta -a "cowsay hello RITLUG from \$(hostname)" -i inventory 
+ansible atlanta -a "cowsay hello RITLUG from \$(hostname)" -m shell -i inventory 
 ```
 
 # Playbooks
