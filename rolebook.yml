@@ -1,0 +1,20 @@
+---
+- name: common tasks
+  hosts: all
+  tasks:
+    - name: install cowsay
+      yum: name=cowsay state=present
+      become: yes
+
+- name: application deployment
+  hosts: app
+
+  roles:
+    - nginx
+
+- name: irc deployment
+  hosts: irc
+
+  roles:
+    - ergo
+

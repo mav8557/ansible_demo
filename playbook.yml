@@ -2,11 +2,11 @@
 - name: configure application servers
   hosts: app
   become: yes
-  gather_facts: yes
   #serial: 1
 
   vars:
     nginx_port: 80
+
   tasks:
     - name: install cowsay
       yum:
@@ -27,11 +27,29 @@
 
 - name: deploy irc server
   hosts: irc
-  become: yes
-  gather_facts: yes
+
+  vars:
+    url: https://github.com/ergochat/ergo/releases/download/v2.9.1/ergo-2.9.1-linux-x86_64.tar.gz
+
   tasks:
+
     - name: install cowsay
       yum: name=cowsay state=present
+      become: yes
     
     - name: create ergo user
       user: name=ergo shell=/bin/bash create_home=yes
+      become: yes
+
+    - name: download ergochat v2.9.1
+      get_url:
+        url: "{{ url }}"
+        dest: /tmp/irc.tgz
+
+    - name: extract ergochat
+      unarchive: src=/tmp/irc.tgz dest=/tmp/ remote_src=yes
+
+    - name: copy ergo configuration
+      template: src=ircd.yaml.j2 dest=/tmp/ergo-2.9.1-linux-x86_64/ircd.yaml
+    
+    

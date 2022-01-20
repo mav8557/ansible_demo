@@ -1,0 +1,14 @@
+---
+# tasks file for nginx
+
+- name: install nginx
+  yum: name=nginx state=present
+  become: yes
+
+- name: configure nginx
+  template: src=nginx.conf.j2 dest=/tmp/nginx.conf
+
+- name: start nginx
+  service: name=nginx.service state=started enabled=yes
+  become: yes
+  
